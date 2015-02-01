@@ -20,6 +20,7 @@ public class HttpProxy extends Thread {
     private void runServerSoceket() {
         try {
             serverSocket = new ServerSocket(listenPort);
+            System.out.println("Inject service berjalan di port " + listenPort);
         } catch (IOException e) {
             System.err.println("Tidak bisa menjalankan inject di port " + listenPort);
         }
