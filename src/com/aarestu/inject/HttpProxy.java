@@ -52,7 +52,7 @@ public class HttpProxy extends Thread {
 
                 BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                while (socket.getInputStream().available() < 1 && isRunning()) {
+                while (isRunning() && socket.getInputStream().available() < 1) {
                     // tunggu hingga ada request input
                 }
 
