@@ -11,6 +11,7 @@ public class HttpProxy extends Thread {
     private ServerSocket serverSocket;
     private int listenPort = 6789;
     private Socket socket;
+    private RequestController requestController;
 
     @Override
     public void run() {
@@ -69,7 +70,9 @@ public class HttpProxy extends Thread {
                 System.out.println("ORIGIN REQUEST : ");
                 System.out.println(request);
 
-                socket.getOutputStream().close();
+                requestController = new RequestController(socket);
+                requestController.setOriginRequest(request);
+                requestController.run();
             }
         } catch (Exception e) {
             System.err.println("Gagal meng-handle request");
