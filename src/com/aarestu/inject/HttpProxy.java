@@ -74,6 +74,7 @@ public class HttpProxy extends Thread {
         } catch (Exception e) {
             System.err.println("Gagal meng-handle request");
         } finally {
+            if (socket != null) try { socket.close(); } catch (IOException logOrIgnore) {}
             stopListen();
         }
 
