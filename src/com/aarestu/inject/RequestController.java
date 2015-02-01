@@ -1,9 +1,6 @@
 package com.aarestu.inject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class RequestController extends Thread {
@@ -22,18 +19,26 @@ public class RequestController extends Thread {
         proxySocket = generateProxySocket();
         if(proxySocket != null) {
 
-            BufferedReader reader;
+            BufferedReader reader = null;
+            DataOutputStream out = null;
             try {
+                out = new DataOutputStream(requesterSocket.getOutputStream());
                 reader = new BufferedReader(new InputStreamReader(proxySocket.getInputStream()));
                 for (String line; (line = reader.readLine()) != null;) {
 
                     //kirim ke client
-                    requesterSocket.getOutputStream().write(line.getBytes());
+                    out.write(line.getBytes());
                     System.out.println(line);
                 }
+                out.flush();
             } catch (IOException e) {
                 System.err.println(e.getMessage());
                 try { requesterSocket.getOutputStream().close(); } catch (IOException logOrIgnore) {}
+            } finally {
+                if (out != null) try { out.close(); } catch (IOException logOrIgnore) {}
+                if (reader != null) try { reader.close(); } catch (IOException logOrIgnore) {}
+                if (requesterSocket != null ) try { requesterSocket.close(); } catch (IOException logOrIgnore) {}
+                if (proxySocket != null ) try { proxySocket.close(); } catch (IOException logOrIgnore) {}
             }
 
         } else {
@@ -47,6 +52,7 @@ public class RequestController extends Thread {
             OutputStream os = socket.getOutputStream();
 
             os.write(originRequest.getBytes());
+            os.flush();
 
             return socket;
         } catch (IOException e) {
